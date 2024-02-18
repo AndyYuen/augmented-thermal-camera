@@ -1,0 +1,59 @@
+# Save the output of this file and use kubectl create -f to import
+# it into Kubernetes.
+#
+# Created with podman-4.7.2
+apiVersion: v1
+kind: Service
+metadata:
+  creationTimestamp: "2024-01-15T02:04:23Z"
+  labels:
+    app: thermal-camera-pod
+  name: thermal-camera-pod
+spec:
+  ports:
+  - name: "4000"
+    nodePort: 32400
+    port: 4000
+    targetPort: 4000
+  selector:
+    app: thermal-camera-pod
+  type: NodePort
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  creationTimestamp: "2024-01-15T02:04:23Z"
+  labels:
+    app: thermal-camera-pod
+  name: thermal-camera-pod
+spec:
+  containers:
+  - env:
+    - name: Y_OFFSET
+      value: "5"
+    - name: X_OFFSET
+      value: "-50"
+    - name: ALPHA
+      value: "0.7"
+    - name: RTSP_URL
+      value: rtsp://192.168.1.144:8554/mjpeg/1
+    - name: T_LITE_URL
+      value: http://192.168.1.145/json
+    image: quay.io/andyyuen/thermalcamera:1.0
+    name: thermal-camera
+    ports:
+    - containerPort: 4000
+    securityContext:
+      seccompProfile:
+        type: RuntimeDefault
+      allowPrivilegeEscalation: false
+      capabilities:
+        drop:
+        - ALL
+      privileged: false
+      readOnlyRootFilesystem: false
+      runAsGroup: 1000
+      runAsUser: 1000
+      seLinuxOptions: {}
+    workingDir: /app
+

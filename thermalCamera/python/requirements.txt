@@ -1,0 +1,5 @@
+flask==3.0.0
+opencv-python==4.8.1.78
+flask_sock==0.7.0
+numpy==1.26.2
+requests==2.31.0

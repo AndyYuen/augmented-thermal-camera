@@ -1,0 +1,255 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <!-- meta tags -->
+    <meta charset="utf-8">
+    <meta name="camera-ui" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <style>
+        .flex-container {
+            display: flex;
+            flex-direction: row;
+            justify-content: space-between;
+            width: auto;
+            border: none;
+            margin: 0 auto;
+        }
+        .temperature {
+            width: auto;
+            border: none;
+            margin-left: 0;
+            margin-right: auto;
+            float: left;
+        }
+        .video_display {
+            margin-left: auto;
+            margin-right: auto;
+            width: auto;
+            float: left;
+        }
+        .grid-container {
+            display: grid;
+        }
+        .top {
+            grid-column: 1;
+            grid-row: 1;
+        }
+        .middle {
+            grid-column: 1;
+            grid-row: 2;
+        }
+        .bottom {
+            grid-column: 1;
+            grid-row: 3;
+        }
+        .basement {
+            grid-column: 1;
+            grid-row: 4;
+        }
+        table, td, th {  
+            border: 1px solid #ddd;
+            text-align: left;
+        }
+        table {
+            border-collapse: collapse;
+            width: 100%;
+        }
+        th, td {
+            padding: 5px;
+        }
+        #align {
+            display: none;
+        }
+    </style>
+
+    <title>Thermal Camera Demonstration</title>
+</head>
+<body>
+
+        <div class="flex-container">
+            <!-- <fieldset>
+            <legend>Thermal Image Display</legend> -->
+            <div class="video-display">
+
+                <!-- <img width="80%" src="{{ url_for('video', _external=True, _scheme='https') }}"> -->
+                <!-- <img width="60%" src="{{ url_for('video') }}"> -->
+                <img src="{{ url_for('video') }}" width="800" height="600">
+            </div>
+            <!-- <div id="temperature_display" style="width: auto; margin-left: auto; margin-right: auto"; float: right;> -->
+
+            <div class="temperature">
+                <fieldset>
+                <legend>Thermal Camera Temperature Summary</legend>
+                <table>
+                    <tr>
+                        <th></th>
+                        <th>&deg;C</th>
+                    </tr>
+                    <tr>
+                        <th>Average</th>
+                        <td id="average"></td>
+                    </tr>
+                    <tr>
+                        <th>Centre</th>
+                        <td id="centre"></td>
+                    </tr>
+                    <tr>
+                        <th>Minimum</th>
+                        <td id="minimum"></td>
+                    </tr>
+                    <tr>
+                        <th>Maximum</th>
+                        <td id="maximum"></td>
+                    </tr>
+                </table>
+                </fieldset>
+            <div>
+            <!-- </fieldset> -->
+        </div>
+    
+
+        <fieldset>
+        <legend>Options</legend>
+        <div class="grid-container">
+            <div class="top">
+                <fieldset>
+                    <legend>Image Processing Algorithms</legend>
+                    <!-- <div>
+                        <input type="radio" name="algorithm" onclick="socket.send(value)" id="Canny" value="canny" checked>
+                        <label for="canny">Canny Edge Detection</label>
+                    </div> -->
+                    <!-- <div>
+                        <input type="radio" name="algorithm" onclick="socket.send(value)" id="Gauss" value="gauss">
+                        <label for="Gauss">Adaptive Gauss Mean Thresholding</label>
+                    </div> -->
+                    <div>
+                        <input type="radio" name="algorithm" onclick="socket.send(value)" id="Mean" value="mean">
+                        <label for="Mean">Adaptive Arithmetic Mean Thresholding</label>
+                    </div>
+                    
+                    <div>
+                        <input type="radio" name="algorithm" onclick="socket.send(value)" id="none" value="none" checked>
+                        <label for="none">None</label>
+                    </div>
+                   
+                    </fieldset>
+            </div>
+            <div class="middle">
+                <fieldset>
+                    <legend>Thermal Camera Image Colour Maps</legend>
+                    <div>
+                        <input type="radio" name="colormap" onclick="socket.send(value)" id="jet" value="jet" checked>
+                        <label for="jet">Jet&nbsp; &nbsp; &nbsp; &nbsp; </label>
+                        <img src="{{url_for('static', filename='/images/colorscale_jet.jpg')}}"
+                            width="256" height="30">
+                    </div>
+                    <div>
+                        <input type="radio" name="colormap" onclick="socket.send(value)" id="inferno" value="inferno">
+                        <label for="inferno">Inferno</label>
+                        <img src="{{url_for('static', filename='/images/colorscale_inferno.jpg')}}"
+                            width="256" height="30">
+    
+                    </div>
+                    <!-- <div>
+                        <input type="radio" name="colormap" onclick="socket.send(value)" id="turbo" value="turbo">
+                        <label for="turbo">Turbo&nbsp; &nbsp;</label>
+                        <img src="{{url_for('static', filename='/images/colorscale_turbo.jpg')}}"
+                            width="256" height="30">
+                    </div> -->
+                    </fieldset>
+            </div>
+            <div class="bottom">
+                <fieldset>
+                    <legend>Display</legend>
+                    <div>
+                        <input type="radio" name="display" onclick="socket.send(value)" id="thermal" value="thermal" checked>
+                        <label for="thermal">Thermal Camera Only</label>
+                    </div>
+                    <div>
+                        <input type="radio" name="display" onclick="socket.send(value)" id="normal" value="normal">
+                        <label for="normal">Normal Camera Only</label>
+                    </div>
+                    <div>
+                        <input type="radio" name="display" onclick="socket.send(value)" id="both" value="both">
+                        <label for="both">Thermal and Normal Cameras</label>
+                    </div>
+                    </fieldset>
+            </div>
+            <div class="basement" id="align">
+                <fieldset>
+                    <legend>Image Alignment Offsets</legend>
+                    <table>
+                        <tr><td></td>
+                            <td>
+                            <button name="up" onclick="socket.send('up')">
+                                <img src="{{url_for('static', filename='/images/up.png')}}"
+                                    width="64" height="64">
+                            </button>
+                            </td><td></td>
+                        </tr>
+                        <tr><td>
+                        <button name="left" onclick="socket.send('left')">
+                            <img src="{{url_for('static', filename='/images/left.png')}}"
+                                width="64" height="64">
+                        </button>
+                        </td>
+                        <td>
+                            <button name="right" onclick="socket.send('reset')">
+                                <img src="{{url_for('static', filename='/images/reset.png')}}" 
+                                    width="82" height="64">
+                            </button>
+                        </td>
+                        <td>
+                        <button name="right" onclick="socket.send('right')">
+                            <img src="{{url_for('static', filename='/images/right.png')}}" 
+                                width="64" height="64">
+                        </button>
+                        </td></tr>
+                        <tr><td></td>
+                            <td>
+                            <button name="down" onclick="socket.send('down')">
+                                <img src="{{url_for('static', filename='/images/down.png')}}"
+                                    width="64" height="64">
+                            </button>
+                            </td><td></td>
+                        </tr>
+                    </table>
+                </fieldset>
+            </div>
+        <!-- </div> -->
+
+        <script>
+            const names = ['thermal', 'normal', 'both']
+ 
+            box = document.getElementById('align');
+
+            for (var i = 0; i < names.length; i++ ) {
+                el = document.getElementById(names[i]);
+                el.addEventListener('change', function handleChange(event) {
+                if (event.target.value === 'both') {
+                    box.style.display = 'flex';
+                } else {
+                    box.style.display = 'none';
+                }
+                });
+            }
+
+            // var url = "{{ url_for('events') }}"
+            // const socket = new WebSocket(url);
+            // const socket = new WebSocket("{{ url_for('events') }}");
+            const socket = new WebSocket("{{ url_for('events') }}");
+            socket.addEventListener('message', ev => {
+                msg = JSON.parse(ev.data);
+                document.getElementById('average').innerHTML =  msg[0];
+                document.getElementById('centre').innerHTML =  msg[1];
+                document.getElementById('minimum').innerHTML =  msg[2];
+                document.getElementById('maximum').innerHTML =  msg[3];
+            });
+    
+        </script>
+
+    </div>
+    </fieldset>
+
+</body>
+</html>
